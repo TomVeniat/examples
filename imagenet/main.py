@@ -242,7 +242,7 @@ def main_worker(gpu, ngpus_per_node, args):
         validate(val_loader, model, criterion, args)
         return
 
-    exp_folder = datetime.datetime.now()
+    exp_folder = str(datetime.datetime.now())
     os.mkdir(exp_folder)
 
     for epoch in range(args.start_epoch, args.epochs):
