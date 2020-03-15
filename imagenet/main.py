@@ -18,7 +18,7 @@ import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import torchvision.models as models
 
-from imagenet.my_resnet import resnet26
+from models.my_resnet import resnet26
 
 models.__dict__['resnet26'] = resnet26
 model_names = sorted(name for name in models.__dict__
