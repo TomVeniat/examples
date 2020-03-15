@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import os
 import random
 import shutil
@@ -241,6 +242,9 @@ def main_worker(gpu, ngpus_per_node, args):
         validate(val_loader, model, criterion, args)
         return
 
+    exp_folder = datetime.datetime.now()
+    os.mkdir(exp_folder)
+
     for epoch in range(args.start_epoch, args.epochs):
         if args.distributed:
             train_sampler.set_epoch(epoch)
@@ -264,7 +268,7 @@ def main_worker(gpu, ngpus_per_node, args):
                 'state_dict': model.state_dict(),
                 'best_acc1': best_acc1,
                 'optimizer' : optimizer.state_dict(),
-            }, is_best)
+            }, is_best, dir=exp_folder)
 
 
 def train(train_loader, model, criterion, optimizer, epoch, args):
@@ -357,10 +361,11 @@ def validate(val_loader, model, criterion, args):
     return top1.avg
 
 
-def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
-    torch.save(state, filename)
+def save_checkpoint(state, is_best, dir='.', filename='checkpoint.pth.tar'):
+    f_name = os.path.join(dir, filename)
+    torch.save(state, f_name)
     if is_best:
-        shutil.copyfile(filename, 'model_best.pth.tar')
+        shutil.copyfile(f_name, os.path.join(dir, 'model_best.pth.tar'))
 
 
 class AverageMeter(object):
